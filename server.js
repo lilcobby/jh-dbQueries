@@ -1,4 +1,3 @@
-
 // Import and require mysql2
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
@@ -17,6 +16,10 @@ const db = mysql.createConnection(
   console.log(`Connected to the classlist_db database.`)
 );
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+console.log(`Server running on port ${PORT}`);
+db.query("SELECT * FROM employee ", (err, result) => {
+  if (err) {
+    console.log(err);
+  }
+  console.table(result);
 });
