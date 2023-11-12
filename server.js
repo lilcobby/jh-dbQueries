@@ -13,13 +13,98 @@ const db = mysql.createConnection(
     password: "rootroot",
     database: "ukrops_db",
   },
-  console.log(`Connected to the classlist_db database.`)
+  console.log(`Connected to the ukrops database.`)
 );
 
 console.log(`Server running on port ${PORT}`);
-db.query("SELECT * FROM employee ", (err, result) => {
-  if (err) {
-    console.log(err);
-  }
-  console.table(result);
-});
+// db.query("SELECT * FROM employee ", (err, result) => {
+//   if (err) {
+//     console.log(err);
+//   }
+//   console.log(result);
+// });
+// can pass array into quest array objects
+var possible = ["hello", "yes", "no"];
+
+const quest = [
+  {
+    type: "list",
+    name: "tier1",
+    message: "What would you like to do",
+    choices: possible,
+    // choices: [
+    //   "View all departments.",
+    //   "View all roles.",
+    //   "View all employees.",
+    //   "Add a department.",
+    //   "Add a role.",
+    //   "Add an employee.",
+    //   "Update an employee role",
+    // ],
+  },
+  // add dpt
+  {
+    type: "input",
+    name: "dpt",
+    message: "Create a department to add.",
+  },
+  // add role
+  {
+    type: "input",
+    name: "role_name",
+    message: "enter name for the role",
+  },
+  {
+    type: "input",
+    name: "role_salary",
+    message: "enter a salary for the role",
+  },
+  // maybe list?
+  {
+    type: "input",
+    name: "role_department",
+    message: "enter department for the role",
+  },
+  // add employee
+  {
+    type: "input",
+    name: "first_name",
+    message: "enter first name",
+  },
+  {
+    type: "input",
+    name: "last_name",
+    message: "enter last name ",
+  },
+  // list?
+  {
+    type: "input",
+    name: "employee_role",
+    message: "enter a role for employee",
+  },
+  {
+    type: "input",
+    name: "employee_manager",
+    message: "enter a manager",
+  },
+  // update employee role
+  {
+    // make a valide to check name in shit list?
+    type: "input",
+    name: "employee_name",
+    message: "enter name to edit their role.",
+  },
+  // same with role list?
+  {
+    type: "input",
+    name: "employee_role_update",
+    message: "enter a role to change to.",
+  },
+];
+function johns() {
+  inquirer.prompt(quest).then((answers) => {
+    console.log(answers);
+    johns();
+  });
+}
+johns();
