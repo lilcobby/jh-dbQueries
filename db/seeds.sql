@@ -1,9 +1,9 @@
 INSERT INTO department(department_name)
-VALUES  ("nose_hair_care"),
-        ("armpit_hair_grooming"),
-        ("bakery"),
-        ("telecom"),
-        ("sports");
+VALUES  ("dogs"),
+        ("cats"),
+        ("birds"),
+        ("mice"),
+        ("rats");
 
 INSERT INTO role (title, salary, department_id)
 VALUES  ("head", 50, 1),
