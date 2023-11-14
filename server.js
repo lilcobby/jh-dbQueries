@@ -42,29 +42,7 @@ const quest = {
     "Quit",
   ],
 };
-// add dpt
-// {
-//   type: "input",
-//   name: "dpt",
-//   message: "Create a department to add.",
-// },
-// // add role
-// {
-//   type: "input",
-//   name: "role_name",
-//   message: "enter name for the role",
-// },
-// {
-//   type: "input",
-//   name: "role_salary",
-//   message: "enter a salary for the role",
-// },
-// // maybe list?
-// {
-//   type: "input",
-//   name: "role_department",
-//   message: "enter department for the role",
-// },
+
 // // add employee
 // {
 //   type: "input",
@@ -119,6 +97,7 @@ function inquire_prompt() {
 
       case "Add a department":
         addDepartment();
+
         break;
 
       case "Add a role":
@@ -140,7 +119,6 @@ function inquire_prompt() {
     // } (answers.tier1 === "View all departments") {
     //   console.log(answers.tier1);
     // }
-    inquire_prompt();
   });
 }
 
@@ -158,9 +136,75 @@ viewEmployees = () => {
 };
 addDepartment = () => {
   console.log("yeehaw");
+  // add dpt
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "dpt",
+        message: "Create a department to add.",
+        validate: (dpt) => {
+          if (dpt != "") {
+            return true;
+          }
+        },
+      },
+    ])
+    .then(() => {
+      inquire_prompt();
+    });
 };
+
 addArole = () => {
   console.log("yep");
+  inquirer
+    .prompt([
+      // add role
+      {
+        type: "input",
+        name: "role_name",
+        message: "enter a name for the role",
+
+        validate: (role_name) => {
+          if (role_name != "") {
+            return true;
+          }
+        },
+      },
+      {
+        type: "input",
+        name: "role_salary",
+        message: "enter a salary for the role",
+        validate: (role_salary) => {
+          if (role_salary != "") {
+            return true;
+          }
+        },
+      },
+      {
+        type: "input",
+        name: "role_department",
+        message: "enter department for the role",
+        validate: (role_department) => {
+          if (role_department != "") {
+            return true;
+          }
+        },
+      },
+      {
+        type: "input",
+        name: "role_department",
+        message: "enter department for the role",
+        validate: (role_department) => {
+          if (role_department != "") {
+            return true;
+          }
+        },
+      },
+    ])
+    .then(() => {
+      inquire_prompt();
+    });
 };
 addEmployee = () => {
   console.log("asdasdasd");
