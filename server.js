@@ -142,15 +142,15 @@ addDepartment = () => {
 };
 
 addArole = () => {
-  console.log("yep");
+  console.log("creating a new role");
+  viewDepartments();
   db.query(
     "SELECT department.id, department.department_name FROM department",
     (err, dept) => {
-      console.log(dept);
+      // console.log(dept);
       let choices = dept.map((index) => {
         return index.id;
       });
-      console.log(choices);
 
       inquirer
         .prompt([
@@ -158,7 +158,7 @@ addArole = () => {
           {
             type: "input",
             name: "role_name",
-            message: "Create a role to add",
+            message: "Create a role to add (see above for id:name value)",
 
             validate: (role_name) => {
               if (role_name != "") {
@@ -176,32 +176,72 @@ addArole = () => {
               }
             },
           },
-          {
-            type: "list",
-            name: "role_department_id",
-            message: "select a department id for the role",
-            choices: choices,
-          },
         ])
-        .then((data) => {
-          db.query(
-            `INSERT INTO role(title, salary, department_id) VALUES ("${data.role_name}", ("${data.role_salary}"), ("${data.role_department_id}"))`,
-            (err, roles) => {
-              if (err) {
-                console.log(err);
+        .then(
+          (answers) => {
+            const temp = [answers.role_name, answers.role_salary];
+            console.log(temp);
+            db.query(
+              "SELECT department_name, id FROM department",
+              (err, answers) => {
+                if (err) {
+                  console.log(err);
+                }
+                const choice2 = answers.map(({ department_name, id }) => ({
+                  name: department_name,
+                  value: id,
+                }));
+                console.log(choice2);
+                inquirer
+                  .prompt([
+                    {
+                      type: "list",
+                      name: "role_department_id",
+                      message: "select a department for the role",
+                      choices: choice2,
+                    },
+                  ])
+                  .then((answerChoice) => {
+                    console.log(answerChoice);
+                    temp.push(answerChoice.role_department_id);
+                    console.log(temp[0], temp[1], temp[2]);
+                    db.query(
+                      `INSERT INTO role (title, salary, department_id) VALUES ("${temp[0]}", "${temp[1]}", ${temp[2]})`
+                    );
+                    // );
+                    viewRoles();
+                  });
               }
-              console.log("role added successfully");
-              viewRoles();
-            }
-          );
+            );
+          }
+          //   {
+          //     type: "list",
+          //     name: "role_department_id",
+          //     message: "select a department id for the role",
+          //     choices: choices,
+          //   },
+          // ])
+          // .then((data) => {
+          //   db.query(
+          //     `INSERT INTO role(title, salary, department_id) VALUES ("${data.role_name}", ("${data.role_salary}"), ("${data.role_department_id}"))`,
+          //     (err, roles) => {
+          //       if (err) {
+          //         console.log(err);
+          //       }
+          //       console.log("role added successfully");
+          //       viewRoles();
+          //     }
+          //   );
 
-          inquire_prompt();
-        });
+          //   inquire_prompt();
+          // });
+        );
     }
   );
 };
 addEmployee = () => {
-  console.log("asdasdasd");
+  console.log("begin adding employee");
+
   inquirer
     .prompt([
       {
@@ -238,11 +278,22 @@ addEmployee = () => {
       {
         type: "list",
         name: "employee_manager",
-        message: "select a manager for the employee",
-        choices: [1, 2],
+        message: "select a manage for the employee to belong to",
+        choices: ["john", "paul"],
       },
     ])
-    .then(() => {
+    .then((data) => {
+      if (data.employee_manager === "john") {
+        db.query(
+          `INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES ("${data.first_name}", "${data.last_name}", ${data.employee_role}, 1)`,
+          (err, empName) => {
+            if (err) {
+              console.log(err);
+            }
+            viewEmployees();
+          }
+        );
+      }
       inquire_prompt();
     });
 };
