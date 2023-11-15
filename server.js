@@ -42,42 +42,7 @@ const quest = {
     "Quit",
   ],
 };
-
-// // add employee
-// {
-//   type: "input",
-//   name: "first_name",
-//   message: "enter first name",
-// },
-// {
-//   type: "input",
-//   name: "last_name",
-//   message: "enter last name ",
-// },
-// // list?
-// {
-//   type: "input",
-//   name: "employee_role",
-//   message: "enter a role for employee",
-// },
-// {
-//   type: "input",
-//   name: "employee_manager",
-//   message: "enter a manager",
-// },
-// // update employee role
-// {
-//   // make a valide to check name in shit list?
-//   type: "input",
-//   name: "employee_name",
-//   message: "enter name to edit their role.",
-// },
-// // same with role list?
-// {
-//   type: "input",
-//   name: "employee_role_update",
-//   message: "enter a role to change to.",
-// },];
+inquire_prompt();
 
 function inquire_prompt() {
   inquirer.prompt(quest).then((answers) => {
@@ -116,26 +81,40 @@ function inquire_prompt() {
         console.log("NEW PROMPT");
         quitPrompt();
     }
-    // } (answers.tier1 === "View all departments") {
-    //   console.log(answers.tier1);
-    // }
   });
 }
 
-inquire_prompt();
-
 // functions
 viewDepartments = () => {
-  console.log("sometimes");
+  console.log("viewing departments");
+  db.query(
+    "SELECT department.id, department.department_name FROM department",
+    (err, dept) => {
+      console.table(dept);
+    }
+  );
 };
 viewRoles = () => {
-  console.log("sometime2");
+  console.log("viewing roles");
+  db.query(
+    "SELECT role.id, role.title, role.salary, department.department_name FROM role LEFT JOIN department ON department.id = role.department_id",
+    (err, roles) => {
+      if (err) {
+        console.log(err);
+      }
+      console.table(roles);
+    }
+  );
 };
 viewEmployees = () => {
-  console.log("bread");
+  console.log("viewing employees");
+  db.query("SELECT * FROM employee", (err, empl) => {
+    console.table(empl);
+  });
 };
 addDepartment = () => {
-  console.log("yeehaw");
+  console.log("add a new department");
+
   // add dpt
   inquirer
     .prompt([
@@ -150,64 +129,139 @@ addDepartment = () => {
         },
       },
     ])
-    .then(() => {
+    .then((data) => {
+      console.log(data);
+      db.query(
+        `INSERT INTO department(department_name) VALUES ("${data.dpt}")`,
+        (err) => {
+          console.log(err);
+        }
+      );
       inquire_prompt();
     });
 };
 
 addArole = () => {
   console.log("yep");
+  db.query(
+    "SELECT department.id, department.department_name FROM department",
+    (err, dept) => {
+      console.log(dept);
+      let choices = dept.map((index) => {
+        return index.id;
+      });
+      console.log(choices);
+
+      inquirer
+        .prompt([
+          // add role
+          {
+            type: "input",
+            name: "role_name",
+            message: "Create a role to add",
+
+            validate: (role_name) => {
+              if (role_name != "") {
+                return true;
+              }
+            },
+          },
+          {
+            type: "input",
+            name: "role_salary",
+            message: "enter a salary for the role",
+            validate: (role_salary) => {
+              if (role_salary != "") {
+                return true;
+              }
+            },
+          },
+          {
+            type: "list",
+            name: "role_department_id",
+            message: "select a department id for the role",
+            choices: choices,
+          },
+        ])
+        .then((data) => {
+          db.query(
+            `INSERT INTO role(title, salary, department_id) VALUES ("${data.role_name}", ("${data.role_salary}"), ("${data.role_department_id}"))`,
+            (err, roles) => {
+              if (err) {
+                console.log(err);
+              }
+              console.log("role added successfully");
+              viewRoles();
+            }
+          );
+
+          inquire_prompt();
+        });
+    }
+  );
+};
+addEmployee = () => {
+  console.log("asdasdasd");
   inquirer
     .prompt([
-      // add role
       {
         type: "input",
-        name: "role_name",
-        message: "enter a name for the role",
+        name: "first_name",
+        message: "enter first name",
+        validate: (first_name) => {
+          if (first_name != "") {
+            return true;
+          }
+        },
+      },
+      {
+        type: "input",
+        name: "last_name",
+        message: "enter a last name",
+        validate: (last_name) => {
+          if (last_name != "") {
+            return true;
+          }
+        },
+      },
 
-        validate: (role_name) => {
-          if (role_name != "") {
+      {
+        type: "input",
+        name: "employee_role",
+        message: "enter a role for the employee",
+        validate: (employee_role) => {
+          if (employee_role != "") {
             return true;
           }
         },
       },
       {
-        type: "input",
-        name: "role_salary",
-        message: "enter a salary for the role",
-        validate: (role_salary) => {
-          if (role_salary != "") {
-            return true;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "role_department",
-        message: "enter department for the role",
-        validate: (role_department) => {
-          if (role_department != "") {
-            return true;
-          }
-        },
-      },
-      {
-        type: "input",
-        name: "role_department",
-        message: "enter department for the role",
-        validate: (role_department) => {
-          if (role_department != "") {
-            return true;
-          }
-        },
+        type: "list",
+        name: "employee_manager",
+        message: "select a manager for the employee",
+        choices: [1, 2],
       },
     ])
     .then(() => {
       inquire_prompt();
     });
 };
-addEmployee = () => {
-  console.log("asdasdasd");
+updateEmployee = () => {
+  console.log("hello worlds");
+  inquirer.prompt([
+    {
+      type: "list",
+      name: "employee_name",
+      message: "select an employee to edit their role.",
+      choices: ["1", "2", "3"],
+    },
+    {
+      type: "list",
+      name: "employee_role_updte",
+      message: "select a new role for the employee",
+      choices: ["cook", "librarian", "ceo"],
+    },
+  ]);
 };
 quitPrompt = () => {
   inquire_prompt();
