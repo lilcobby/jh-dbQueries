@@ -100,12 +100,16 @@ viewRoles = () => {
     }
   );
 };
+// need to join all and show the big table here
 viewEmployees = () => {
   console.log("viewing employees");
-  db.query("SELECT * FROM employee", (err, empl) => {
-    console.table(empl);
-    inquire_prompt();
-  });
+  db.query(
+    "SELECT employee.id, employee.first_name, employee.last_name,  manager_id, title, salary, department.department_name FROM employee LEFT JOIN role ON role.id = employee.role_id LEFT JOIN department on department.id = employee.role_id",
+    (err, empl) => {
+      console.table(empl);
+      inquire_prompt();
+    }
+  );
 };
 addDepartment = () => {
   console.log("add a new department");
