@@ -210,7 +210,6 @@ addArole = () => {
                   );
 
                   viewRoles();
-                  inquire_prompt();
                 });
             }
           );
@@ -255,7 +254,6 @@ addEmployee = () => {
           name: title,
           value: id,
         }));
-        console.log(choice3);
         inquirer
           .prompt([
             {
@@ -279,7 +277,7 @@ addEmployee = () => {
                     value: role_id,
                   })
                 );
-                console.log(employeeManager);
+
                 inquirer
                   .prompt([
                     {
@@ -291,7 +289,7 @@ addEmployee = () => {
                   ])
                   .then((answers) => {
                     temp.push(answers.employee_manager);
-                    console.log(temp);
+
                     db.query(
                       `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${temp[0]}", "${temp[1]}", ${temp[2]}, ${temp[3]})`,
                       (err, newEmployee) => {
@@ -319,7 +317,7 @@ updateEmployee = () => {
       name: first_name + " " + last_name,
       value: id,
     }));
-    console.log(choice4);
+
     inquirer
       .prompt([
         {
@@ -347,8 +345,6 @@ updateEmployee = () => {
               },
             ])
             .then((roles) => {
-              console.log(roles.roles);
-              console.log(chosen.employee_name);
               db.query(
                 `UPDATE employee SET role_id=${chosen.employee_name} WHERE id= ${roles.roles}`,
                 (err,
